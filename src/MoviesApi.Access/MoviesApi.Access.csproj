@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MoviesAPI.Common\MoviesApi.Common.csproj" />
+    <ProjectReference Include="..\MoviesAPI.Data\MoviesApi.Data.csproj" />
+  </ItemGroup>
+
+</Project>
