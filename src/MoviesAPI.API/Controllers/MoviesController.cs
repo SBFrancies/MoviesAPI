@@ -36,7 +36,7 @@ namespace MoviesApi.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public IActionResult Get([FromQuery]string title, [FromQuery]int? year, [FromQuery]Genre genres)
         {
-            if (!ValidateParamters(title, year, genres))
+            if (!ValidateParameters(title, year, genres))
             {
                 return BadRequest();
             }
@@ -60,6 +60,11 @@ namespace MoviesApi.Api.Controllers
         {
             var results = _movieAccess.GetMoviesByRating(5);
 
+            if (!results.Any())
+            {
+                return NotFound();
+            }
+
             return Ok(results);
         }
 
@@ -71,6 +76,11 @@ namespace MoviesApi.Api.Controllers
         public IActionResult GetTopFiveByUser([FromRoute]Guid userId)
         {
             var results = _movieAccess.GetMoviesByUserRating(userId, 5);
+
+            if (!results.Any())
+            {
+                return NotFound();
+            }
 
             return Ok(results);
         }
@@ -94,7 +104,7 @@ namespace MoviesApi.Api.Controllers
             }
         }
 
-        private bool ValidateParamters(string title, int? year, Genre genres)
+        private bool ValidateParameters(string title, int? year, Genre genres)
         {
             if (string.IsNullOrEmpty(title) && year == null && genres == Genre.None)
             {

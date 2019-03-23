@@ -64,14 +64,27 @@ namespace MoviesApi.Access
         {
             using (MoviesDbContext context = _dbContextFactory())
             {
-                return context.Ratings
+                var moviesWithRatings = context.Ratings
                     .Include(a => a.Movie)
+                    .ThenInclude(a => a.Ratings)
                     .Where(a => a.User.Id == userId)
                     .OrderByDescending(a => a.Rating)
                     .ThenBy(a => a.Movie.Title)
                     .Take(take)
-                    .Select(a => PopulateMovieFromEntity(a.Movie))
-                    .ToList();
+                    .Select(a => new {a.Movie, a.Movie.Ratings});
+
+                return moviesWithRatings.Select(a =>
+                    new Movie
+                    {
+                        Id = a.Movie.Id,
+                        Genre = a.Movie.Genre,
+                        RunningTime = a.Movie.RunningTime,
+                        Title = a.Movie.Title,
+                        YearOfRelease = a.Movie.YearOfRelease,
+                        AverageRating = a.Ratings == null || !a.Ratings.Any()
+                            ? null
+                            : (decimal?) a.Ratings.Average(b => b.Rating).RoundToNearestPointFive(),
+                    }).ToList();
             }
         }
 

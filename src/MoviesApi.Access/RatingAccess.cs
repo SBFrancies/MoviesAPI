@@ -13,16 +13,16 @@ namespace MoviesApi.Access
 {
     public class RatingAccess : IRatingAccess
     {
-        private readonly MoviesDbContext _dbContextFactory;
+        private readonly Func<MoviesDbContext> _dbContextFactory;
 
-        public RatingAccess(MoviesDbContext dbContextFactory)
+        public RatingAccess(Func<MoviesDbContext> dbContextFactory)
         {
             _dbContextFactory = dbContextFactory;
         }
 
         public async Task UpsertRatingAsync(Guid userId, Guid movieId, decimal rating, CancellationToken cancellationToken = default)
         {
-            using (MoviesDbContext context = _dbContextFactory)
+            using (MoviesDbContext context = _dbContextFactory())
             {
                 UserEntity user = context.Users.SingleOrDefault(a => a.Id == userId);
 
